@@ -295,3 +295,37 @@ TEST(TSet, check_negation_operator)
 
   EXPECT_EQ(expSet, set1);
 }
+
+//MY TESTS
+
+TEST(TSet, check_negation_of_intersect_of_two_equal_sets)
+{
+	const int size = 4;
+	TSet set1(size), set2(size), expSet(size);
+	set1.InsElem(0);
+	set1.InsElem(2);
+	set1.InsElem(3);
+
+	set2.InsElem(0);
+	set2.InsElem(2);
+	set2.InsElem(1);
+
+	expSet.InsElem(1);
+	expSet.InsElem(3);
+	
+	EXPECT_EQ(expSet, ~(set1 * set2));
+}
+
+TEST(TSet, check_negation_of_combine_of_two_equal_sets)
+{
+	const int size = 4;
+	TSet set1(size), set2(size), expSet(size);
+	set1.InsElem(0);
+	set1.InsElem(2);
+	set1.InsElem(3);
+
+	set2.InsElem(0);
+	set2.InsElem(1);
+
+	EXPECT_EQ(expSet, ~(set1 + set2));
+}
