@@ -33,18 +33,23 @@ int TSet::GetMaxPower(void) const // получить макс. к-во эл-т�
 
 int TSet::IsMember(const int Elem) const // элемент множества?
 {
-    if (BitField.GetBit(Elem))
-        return 1;
-    return 0;
+    if (Elem < 0 || Elem >= MaxPower)
+        throw "ERROR_IS_MEMBER_OUT_OF_RANGE";
+
+    return BitField.GetBit(Elem);
 }
 
 void TSet::InsElem(const int Elem) // включение элемента множества
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw "ERROR_INS_ELEMENT_OUT_OF_RANGE";
     BitField.SetBit(Elem);
 }
 
 void TSet::DelElem(const int Elem) // исключение элемента множества
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw "ERROR_DEL_ELEMENT_OUT_OF_RANGE";
     BitField.ClrBit(Elem);
 }
 
@@ -52,6 +57,8 @@ void TSet::DelElem(const int Elem) // исключение элемента мн
 
 TSet& TSet::operator=(const TSet &s) // присваивание
 {
+    if (this == &s)
+        return *this;
     MaxPower = s.MaxPower;
     BitField = s.BitField;
     return *this;
@@ -80,6 +87,8 @@ TSet TSet::operator+(const TSet &s) // объединение
 
 TSet TSet::operator+(const int Elem) // объединение с элементом
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw "ERROR_PLUS_OPERATOR";
     TSet buf(*this);
     buf.BitField.SetBit(Elem);
     return buf;
@@ -87,6 +96,8 @@ TSet TSet::operator+(const int Elem) // объединение с элемент
 
 TSet TSet::operator-(const int Elem) // разность с элементом
 {
+    if (Elem < 0 || Elem >= MaxPower)
+        throw "ERROR_MINUS_OPERATOR";
     TSet buf(*this);
     buf.BitField.ClrBit(Elem);
     return buf;
@@ -110,12 +121,18 @@ TSet TSet::operator~(void) // дополнение
 
 istream &operator>>(istream &istr, TSet &s) // ввод
 {
-    istr >> s.BitField;
+    TELEM buf;
+    istr >> buf;
+    if (buf < 0 || buf >= s.GetMaxPower())
+        throw "ERROR_IN_CIN_NUMBER_IS_OUT_OF_RANGE";
+    s.InsElem(buf);
     return istr;
 }
 
 ostream& operator<<(ostream &ostr, const TSet &s) // вывод
 {
-    ostr << s.BitField;
+    for (int i = 0; i < s.GetMaxPower(); ++i)
+        if (s.IsMember(i))
+            ostr << i << " ";
     return ostr;
 }
